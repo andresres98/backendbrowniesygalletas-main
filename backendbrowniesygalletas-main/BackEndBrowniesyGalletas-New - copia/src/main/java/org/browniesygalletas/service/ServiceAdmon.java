@@ -5,11 +5,17 @@ import org.browniesygalletas.modelo.Factura;
 import org.browniesygalletas.modelo.Producto;
 import org.browniesygalletas.repositorio.CrudFullRepositorio;
 import org.browniesygalletas.repositorio.FullRepositorio;
+import org.browniesygalletas.util.ConexionBaseDatos;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ServiceAdmon extends FullRepositorio implements CrudFullRepositorio {
+
 
     static Scanner sc = new Scanner(System.in);
 
@@ -106,7 +112,17 @@ public class ServiceAdmon extends FullRepositorio implements CrudFullRepositorio
 
     @Override
     public void listarProductos() {
-        dataSourceProductos.forEach(System.out::println);
+        try (Connection conn = ConexionBaseDatos.getInstance();
+             Statement stmt = conn.createStatement()){
+            ResultSet rs = stmt.executeQuery("SELECT * FROM PRODUCTOS");
+                    while(rs.next()){
+                        System.out.println(rs.getString("Nombre"));
+                        System.out.println(rs.getDouble("Precio"));
+                    }
+        } catch (SQLException e){
+            System.out.println(e);
+        }
+
     }
 
 
